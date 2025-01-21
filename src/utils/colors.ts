@@ -1,0 +1,1 @@
+export const HIGHLIGHT_COLOR = '#ff6b00'; // Bright orange for contrast 
