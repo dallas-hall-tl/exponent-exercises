@@ -1,25 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HIGHLIGHT_COLOR } from '../utils/colors';
 
 const ExponentAnimation: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [step, setStep] = useState(0);
+  const timeoutsRef = useRef<number[]>([]);
+
+  const clearTimeouts = () => {
+    timeoutsRef.current.forEach(window.clearTimeout);
+    timeoutsRef.current = [];
+  };
 
   const startAnimation = () => {
-    // Reset first
+    clearTimeouts();
     setIsPlaying(true);
     setStep(0);
 
-    // Wait for reset to complete before starting new animation
-    setTimeout(() => {
-      // Step 1: Show exponent
-      setTimeout(() => setStep(1), 0);
-      // Step 2: Show equals sign quickly after
-      setTimeout(() => setStep(2), 1200);
-      // Step 3: Show multiplication with more time
-      setTimeout(() => setStep(3), 2500);
-    }, 100);
+    const timeouts = [
+      setTimeout(() => setStep(1), 100),
+      setTimeout(() => setStep(2), 1300),
+      setTimeout(() => setStep(3), 2600)
+    ];
+
+    timeoutsRef.current = timeouts;
   };
 
   return (
@@ -139,7 +143,6 @@ const ExponentAnimation: React.FC = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={startAnimation}
-        disabled={step === 0}
         style={{
           backgroundColor: '#0066cc',
           color: 'white',
@@ -148,8 +151,7 @@ const ExponentAnimation: React.FC = () => {
           borderRadius: '8px',
           fontSize: '1.1rem',
           fontWeight: 'bold',
-          cursor: step === 0 ? 'default' : 'pointer',
-          opacity: step === 0 ? 0.7 : 1,
+          cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
